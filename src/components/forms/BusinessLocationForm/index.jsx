@@ -24,6 +24,7 @@ export const BusinessLocationForm = ({ className = '' }) => {
     watch,
     reset,
   } = useForm({
+    mode: 'all',
     resolver: zodResolver(BusinessLocationFormSchema),
     defaultValues: {
       amana: 'Riyadh',
