@@ -4,13 +4,13 @@ import noiseSrc from '@/assets/noise-fg.png';
 import bgPatternSrc from '@/assets/bg-pattern.png';
 
 export const Sidebar = () => (
-  <aside className='relative h-full min-w-[340px] max-w-[340px] bg-black'>
+  <aside className='relative w-[340px] bg-black'>
     <div className='p-6'>
       <Link to='/' className='mb-7 inline-block'>
         <CompanyLogo />
       </Link>
       <div className='text-2xl font-semibold text-white'>Smart Advisor</div>
-      <div className='text-moon-400 text-sm'>
+      <div className='text-sm text-moon-400'>
         Commercial licensing: starting, modifying or closing business
       </div>
     </div>
