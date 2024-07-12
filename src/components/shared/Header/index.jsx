@@ -5,7 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 
 export const Header = () => {
   const [searchParams] = useSearchParams();
-  const activeStep = searchParams.get('step');
+  const activeStep = searchParams.get('step') || 'basics';
 
   return (
     <header className='flex w-full justify-between py-6 pl-[52.5px] pr-6'>
