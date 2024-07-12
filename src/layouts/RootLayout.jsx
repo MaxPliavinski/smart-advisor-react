@@ -1,3 +1,7 @@
-export const RootLayout = () => {
-  return <h1>Root layout</h1>;
-};
+import { Sidebar } from '@/components/shared';
+
+export const RootLayout = () => (
+  <>
+    <Sidebar />
+  </>
+);
