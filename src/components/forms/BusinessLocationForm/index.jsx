@@ -1,10 +1,13 @@
 import { useNavigate } from 'react-router-dom';
-import { Progress } from 'flowbite-react';
-import { ArrowLeft } from '@/components/icons';
-import { Select, Label, Input } from '../../common';
+import { Button, Progress } from 'flowbite-react';
+import { ArrowLeft, Warning, Redirect } from '@/components/icons';
+import { Select, Label, Input } from '@/components/common';
 import { businessLocationFormFields } from '@/data';
+import { Alert } from '@/components/ui';
 
 export const BusinessLocationForm = ({ className = '' }) => {
+  const isAlertVisbile = true;
+  const isRestrictionAcknowledgementPresent = true;
   const navigate = useNavigate();
   const filledFields = 2;
 
@@ -58,6 +61,33 @@ export const BusinessLocationForm = ({ className = '' }) => {
           ),
         )}
       </div>
+      {isAlertVisbile && (
+        <Alert color='failure' className='mt-6 rounded-md'>
+          <div className='mb-[6px] flex items-center gap-2 font-semibold'>
+            <Warning />
+            You will not be able to perform activities in the specified area
+          </div>
+          <span className='text-sm'>
+            Select another location or use map based insights to find the best
+            one
+          </span>
+          <Button
+            size='sm'
+            color='failure'
+            className='bg-red700 mt-3 flex text-xs font-medium text-white *:items-center *:gap-2'
+          >
+            Map Based Insights <Redirect />
+          </Button>
+        </Alert>
+      )}
+      <Button
+        type='submit'
+        className='bg-primary-600 hover:!bg-primary-600/80 mt-8 w-full'
+      >
+        {isRestrictionAcknowledgementPresent
+          ? 'Continue with restriction acknowledgement'
+          : 'Continue'}
+      </Button>
     </form>
   );
 };
