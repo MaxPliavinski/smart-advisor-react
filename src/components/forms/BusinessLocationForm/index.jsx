@@ -1,26 +1,51 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button, Progress } from 'flowbite-react';
 import { ArrowLeft, Warning, Redirect } from '@/components/icons';
 import { Select, Label, Input } from '@/components/common';
-import { businessLocationFormFields } from '@/data';
+import { businessLocationFormFields, FORM_STEPS } from '@/data';
 import { Alert } from '@/components/ui';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { BusinessLocationFormSchema } from './schema';
 
 export const BusinessLocationForm = ({ className = '' }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeStep] = useState(searchParams.get('step') || 'basics');
   const isAlertVisbile = true;
   const isRestrictionAcknowledgementPresent = true;
   const navigate = useNavigate();
   const filledFields = 2;
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(BusinessLocationFormSchema) });
+
   const handleGoBack = () => navigate(-1);
 
+  const onSubmit = (data) => {
+    console.log('Form data: ', data);
+
+    const activeStepIndex = FORM_STEPS.findIndex((step) => step === activeStep);
+
+    if (activeStepIndex !== FORM_STEPS.length - 1) {
+      const newSearchParams = searchParams;
+      newSearchParams.set('step', FORM_STEPS.at(activeStepIndex + 1));
+
+      setSearchParams(newSearchParams);
+    }
+  };
+
   return (
-    <form className={`${className}`}>
+    <form onSubmit={handleSubmit(onSubmit)} className={`${className}`}>
       <div className='flex items-center'>
         <button
           onClick={handleGoBack}
-          className='text-gray500 flex w-fit items-center gap-[6px] border-none bg-none'
+          className='flex w-fit items-center gap-[6px] border-none bg-none text-gray500'
         >
-          <ArrowLeft className='text-gray500 h-4 w-4' />
+          <ArrowLeft className='h-4 w-4 text-gray500' />
           <span className='text-sm font-semibold leading-tight'>Back</span>
         </button>
         <div className='w-full'>
@@ -30,35 +55,51 @@ export const BusinessLocationForm = ({ className = '' }) => {
           />
         </div>
       </div>
-      <h1 className='text-gray900 mt-3 text-2xl font-semibold leading-tight'>
+      <h1 className='mt-3 text-2xl font-semibold leading-tight text-gray900'>
         Specify the business location
       </h1>
       <div className='mt-8 flex flex-col gap-4'>
         {businessLocationFormFields.map(
-          ({ id, label, type, required, ...field }) => (
-            <div key={id} className='flex flex-col gap-2'>
-              <Label htmlFor={id} value={label} />
-              {type === 'select' && (
-                <Select id={id} required={required}>
-                  {field.options.map((option, i) => (
-                    <option key={option + i}>{option}</option>
-                  ))}
-                </Select>
-              )}
-              {type === 'input' && (
-                <Input
-                  id={id}
-                  required={required}
-                  placeholder={field.placeholder}
-                />
-              )}
-              {!required && (
-                <div className='text-gray500 text-sm leading-tight'>
-                  Optional
-                </div>
-              )}
-            </div>
-          ),
+          ({ id, label, type, required, ...field }) => {
+            const error = errors[id]?.message;
+
+            return (
+              <div key={id} className='flex flex-col gap-2'>
+                <Label htmlFor={id} value={label} />
+                {type === 'select' && (
+                  <Select
+                    id={id}
+                    required={required}
+                    color={error ? 'failure' : undefined}
+                    {...register(id)}
+                  >
+                    {field.options.map((option, i) => (
+                      <option key={option + i}>{option}</option>
+                    ))}
+                  </Select>
+                )}
+                {type === 'input' && (
+                  <Input
+                    id={id}
+                    required={required}
+                    placeholder={field.placeholder}
+                    error={error}
+                    {...register(id)}
+                  />
+                )}
+                {error && (
+                  <span className='text-sm font-medium text-red-500'>
+                    {error}
+                  </span>
+                )}
+                {!required && !error && (
+                  <div className='text-sm leading-tight text-gray500'>
+                    Optional
+                  </div>
+                )}
+              </div>
+            );
+          },
         )}
       </div>
       {isAlertVisbile && (
@@ -74,7 +115,7 @@ export const BusinessLocationForm = ({ className = '' }) => {
           <Button
             size='sm'
             color='failure'
-            className='bg-red700 mt-3 flex text-xs font-medium text-white *:items-center *:gap-2'
+            className='mt-3 flex bg-red700 text-xs font-medium text-white *:items-center *:gap-2'
           >
             Map Based Insights <Redirect />
           </Button>
@@ -82,7 +123,7 @@ export const BusinessLocationForm = ({ className = '' }) => {
       )}
       <Button
         type='submit'
-        className='bg-primary-600 hover:!bg-primary-600/80 mt-8 w-full'
+        className='mt-8 w-full bg-primary-600 hover:!bg-primary-600/80'
       >
         {isRestrictionAcknowledgementPresent
           ? 'Continue with restriction acknowledgement'

@@ -5,14 +5,14 @@ export const businessLocationFormFields = [
     id: 'amana',
     type: 'select',
     label: 'Amana',
-    options: ['United States', 'Canada'],
+    options: ['Riyadh', 'Jeddah'],
     required: true,
   },
   {
     id: 'municipality',
     type: 'select',
     label: 'Municipality',
-    options: ['United States', 'Canada'],
+    options: ['Al Olaya', 'Al Malaz'],
     required: true,
   },
   {
