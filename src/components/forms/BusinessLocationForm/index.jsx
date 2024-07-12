@@ -4,7 +4,7 @@ import { ArrowLeft, Warning, Redirect } from '@/components/icons';
 import { Select, Label, Input } from '@/components/common';
 import { businessLocationFormFields, FORM_STEPS } from '@/data';
 import { Alert } from '@/components/ui';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BusinessLocationFormSchema } from './schema';
@@ -15,14 +15,27 @@ export const BusinessLocationForm = ({ className = '' }) => {
   const isAlertVisbile = true;
   const isRestrictionAcknowledgementPresent = true;
   const navigate = useNavigate();
-  const filledFields = 2;
+  const [filledFields, setFilledFields] = useState(2);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitSuccessful },
+    watch,
     reset,
-  } = useForm({ resolver: zodResolver(BusinessLocationFormSchema) });
+  } = useForm({
+    resolver: zodResolver(BusinessLocationFormSchema),
+    defaultValues: {
+      amana: 'Riyadh',
+      municipality: 'Al Olaya',
+    },
+  });
+
+  watch((data) => {
+    const filledFields = Object.values(data).filter((value) => value).length;
+
+    setFilledFields(filledFields);
+  });
 
   const handleGoBack = () => navigate(-1);
 
