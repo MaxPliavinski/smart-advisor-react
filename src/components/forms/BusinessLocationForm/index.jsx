@@ -4,14 +4,14 @@ import { ArrowLeft, Warning, Redirect } from '@/components/icons';
 import { Select, Label, Input } from '@/components/common';
 import { businessLocationFormFields, FORM_STEPS } from '@/data';
 import { Alert } from '@/components/ui';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BusinessLocationFormSchema } from './schema';
 
 export const BusinessLocationForm = ({ className = '' }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [activeStep] = useState(searchParams.get('step') || 'basics');
+  const [searchParams] = useSearchParams();
+  const activeStep = searchParams.get('step') || 'basics';
   const isAlertVisbile = true;
   const isRestrictionAcknowledgementPresent = true;
   const navigate = useNavigate();
@@ -20,7 +20,8 @@ export const BusinessLocationForm = ({ className = '' }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitSuccessful },
+    reset,
   } = useForm({ resolver: zodResolver(BusinessLocationFormSchema) });
 
   const handleGoBack = () => navigate(-1);
@@ -31,12 +32,13 @@ export const BusinessLocationForm = ({ className = '' }) => {
     const activeStepIndex = FORM_STEPS.findIndex((step) => step === activeStep);
 
     if (activeStepIndex !== FORM_STEPS.length - 1) {
-      const newSearchParams = searchParams;
-      newSearchParams.set('step', FORM_STEPS.at(activeStepIndex + 1));
-
-      setSearchParams(newSearchParams);
+      navigate('/?step=' + FORM_STEPS.at(activeStepIndex + 1));
     }
   };
+
+  useEffect(() => {
+    reset();
+  }, [reset, isSubmitSuccessful]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={`${className}`}>
