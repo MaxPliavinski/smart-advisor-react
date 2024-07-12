@@ -4,7 +4,7 @@ import noiseSrc from '@/assets/noise-fg.png';
 import bgPatternSrc from '@/assets/bg-pattern.png';
 
 export const Sidebar = () => (
-  <aside className='relative h-full max-w-[340px] bg-black'>
+  <aside className='relative h-full min-w-[340px] max-w-[340px] bg-black'>
     <div className='p-6'>
       <Link to='/' className='mb-7 inline-block'>
         <CompanyLogo />
