@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { Progress } from 'flowbite-react';
 import { ArrowLeft } from '@/components/icons';
-import { Select, Label } from '../../common';
+import { Select, Label, Input } from '../../common';
+import { businessLocationFormFields } from '@/data';
 
 export const BusinessLocationForm = ({ className = '' }) => {
   const navigate = useNavigate();
@@ -30,17 +31,32 @@ export const BusinessLocationForm = ({ className = '' }) => {
         Specify the business location
       </h1>
       <div className='mt-8 flex flex-col gap-4'>
-        <div>
-          <div className='mb-2 block'>
-            <Label htmlFor='countries' value='Amana' />
-          </div>
-          <Select id='countries' required>
-            <option>United States</option>
-            <option>Canada</option>
-            <option>France</option>
-            <option>Germany</option>
-          </Select>
-        </div>
+        {businessLocationFormFields.map(
+          ({ id, label, type, required, ...field }) => (
+            <div key={id} className='flex flex-col gap-2'>
+              <Label htmlFor={id} value={label} />
+              {type === 'select' && (
+                <Select id={id} required={required}>
+                  {field.options.map((option, i) => (
+                    <option key={option + i}>{option}</option>
+                  ))}
+                </Select>
+              )}
+              {type === 'input' && (
+                <Input
+                  id={id}
+                  required={required}
+                  placeholder={field.placeholder}
+                />
+              )}
+              {!required && (
+                <div className='text-gray500 text-sm leading-tight'>
+                  Optional
+                </div>
+              )}
+            </div>
+          ),
+        )}
       </div>
     </form>
   );
