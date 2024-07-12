@@ -4,3 +4,4 @@ export * from './SAFlag';
 export * from './ArrowLeft';
 export * from './Warning';
 export * from './Redirect';
+export * from './MapMarker';
